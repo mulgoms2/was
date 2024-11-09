@@ -17,15 +17,24 @@ import org.springframework.security.web.SecurityFilterChain;
 public class AuthenticationConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable).
-                authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/login").permitAll().anyRequest().authenticated()).cors(Customizer.withDefaults());
+        http.csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())
+                .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/login")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated());
 
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder().username("user").password("password").roles("USER").build();
+        UserDetails userDetails = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("password")
+                .roles("USER")
+                .build();
 
         return new InMemoryUserDetailsManager(userDetails);
     }
