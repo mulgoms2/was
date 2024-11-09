@@ -13,6 +13,12 @@ java {
     }
 }
 
+javaToolchains {
+    repositories {
+        mavenCentral()  // 툴체인 저장소 추가
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
