@@ -18,12 +18,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
-    private final UserRepository users;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserAccount> userAccount = users.findByUsername(username);
-
+        Optional<UserAccount> userAccount = userRepository.findByUsername(username);
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
