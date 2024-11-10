@@ -1,25 +1,44 @@
 spring:
   application:
     name: was
-
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;MODE=MYSQL
-    username: sa
-    password: 1234
-  
   jpa:
-    database: mysql
-    open-in-view: false # osiv ??. ?????? ???? ???? ??? ???? ????. entity? ????? ??(???? ??? ??) ?? ??
+    open-in-view: false # osiv
     hibernate:
       ddl-auto: create # or update, create-drop, validate
     properties:
       hibernate:
-        #        show_sql: true # system.out ??
+        #        show_sql: true # system.out
         format_sql: true
-#        use_sql_comments: true
+  #        use_sql_comments: true
+  h2:
+    console:
+      enabled: false
 
 logging:
   level:
-    org.hibernate.SQL: debug # logger? sql ??
+    org.hibernate.SQL: debug # logger
+    org.hibernate.type: trace
+---
+spring:
+  profiles:
+    active: dev
+  application:
+    name: was
+  jpa:
+    #    database: h2
+    open-in-view: false # osiv
+    hibernate:
+      ddl-auto: create # or update, create-drop, validate
+    properties:
+      hibernate:
+        #        show_sql: true # system.out
+        format_sql: true
+  #        use_sql_comments: true
+
+  datasource:
+    url: jdbc:h2:mem:test
+
+logging:
+  level:
+    org.hibernate.SQL: debug # logger
     org.hibernate.type: trace

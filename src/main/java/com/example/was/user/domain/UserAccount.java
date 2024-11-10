@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "USER_ACCOUNT")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
