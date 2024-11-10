@@ -19,8 +19,7 @@ public class AuthenticationConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/login")
+                .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/v1/login", "/api/v1/users")
                         .permitAll()
                         .anyRequest()
                         .authenticated());
