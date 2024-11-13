@@ -21,13 +21,13 @@ public class AuthService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserAccount> userAccount = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<UserAccount> userAccount = userRepository.findByEmail(email);
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        authorities.add(new SimpleGrantedAuthority("ADMIN"));
 
-        UserAccount account = userAccount.orElseThrow(() -> new UsernameNotFoundException(username + "을 찾을 수 없습니다."));
+        UserAccount account = userAccount.orElseThrow(() -> new UsernameNotFoundException(email + "을 찾을 수 없습니다."));
 
         return new User(account.getEmail(), account.getPassword(), authorities);
     }
