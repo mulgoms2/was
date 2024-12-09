@@ -11,4 +11,10 @@ public class HomeController {
     public String home () {
         return "it's working now";
     }
+
+    @ResponseBody
+    @GetMapping("/api/v1/healthCheck")
+    public String healthCheck() {
+        return "ok";
+    }
 }
