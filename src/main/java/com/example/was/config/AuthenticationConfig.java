@@ -1,11 +1,11 @@
 package com.example.was.config;
 
 import com.example.was.constants.ApiConstant;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -21,7 +21,9 @@ import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class AuthenticationConfig {
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
@@ -33,7 +35,7 @@ public class AuthenticationConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers(ApiConstant.WHITE_LIST_URL)
                         .permitAll()
                         .anyRequest()
