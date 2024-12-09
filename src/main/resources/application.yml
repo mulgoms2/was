@@ -44,3 +44,11 @@ logging:
   level:
     org.hibernate.SQL: debug # logger
     org.hibernate.type: trace
+  file:
+    name: myapp.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: myapp.%d{yyyy-MM-dd}-%i.log
+      max-file-size: 10KB
+  pattern:
+    dateformat: Asia/Seoul
