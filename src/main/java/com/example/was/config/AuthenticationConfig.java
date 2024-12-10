@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationConfig {
     private final CorsConfigurationSource corsConfigurationSource;
+    private final CorsFilter corsFilter;
 
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
@@ -35,7 +37,8 @@ public class AuthenticationConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .addFilter(corsFilter)
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers(ApiConstant.WHITE_LIST_URL)
                         .permitAll()
                         .anyRequest()
@@ -43,6 +46,21 @@ public class AuthenticationConfig {
 
         return http.build();
     }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedHeader("*");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        return new CorsFilter(source);
+    }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
