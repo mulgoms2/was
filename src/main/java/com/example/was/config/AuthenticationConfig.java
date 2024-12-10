@@ -48,8 +48,8 @@ public class AuthenticationConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("https://was.woowang.store"));
-        configuration.setAllowedOriginPatterns(List.of("*")); // 모든 도메인 허용
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://woowangjwawang.vercel.app"));
+//        configuration.setAllowedOriginPatterns(List.of("*")); // 모든 도메인 허용
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 //        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         configuration.setAllowedHeaders(List.of("*"));
