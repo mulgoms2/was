@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -41,6 +42,11 @@ public class LoginController {
         }
     }
 
-    private record LoginRequest(@NotEmpty @Email String email, @NotEmpty String password) {
+    private record LoginRequest(@NotEmpty(message = "유효한 이메일 형식이 아닙니다.") @Email(message = "이메일 ㄱㄱ") String email, @NotEmpty String password) {
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationException() {
+        return ResponseEntity.badRequest().body("유효한 형식의 이메일 주소가 아닙니다.");
     }
 }
