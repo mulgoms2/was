@@ -14,14 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
-public class AuthenticationConfig {
-//    private final CorsFilter corsFilter;
+public class SpringSecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
@@ -35,7 +33,6 @@ public class AuthenticationConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-//                .addFilter(corsFilter)
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers(ApiConstant.WHITE_LIST_URL)
                         .permitAll()
                         .anyRequest()
