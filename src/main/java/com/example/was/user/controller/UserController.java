@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/user/valid")
-    public ResponseEntity<?> checkEmailDuplication(@Email String email) {
+    public ResponseEntity<?> checkEmailDuplication(@Valid @Email String email) {
         if (userService.isUserEmailDuplicated(email)) {
             throw new UserDuplicateException(email);
         }
