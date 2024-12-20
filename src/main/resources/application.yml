@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: prod
   application:
     name: was
   jpa:
@@ -10,14 +12,22 @@ spring:
         #        show_sql: true # system.out
         format_sql: true
   #        use_sql_comments: true
-  h2:
-    console:
-      enabled: false
-
+  datasource:
+    url: jdbc:postgresql://database-1.cxaay0sy093x.ap-northeast-2.rds.amazonaws.com:5432/postgres
+    username: postgres
+    password: postgres
 logging:
   level:
     org.hibernate.SQL: debug # logger
     org.hibernate.type: trace
+  file:
+    name: myapp.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: myapp.%d{yyyy-MM-dd}-%i.log
+      max-file-size: 10KB
+  pattern:
+    dateformat: Asia/Seoul
 ---
 spring:
   profiles:
@@ -34,21 +44,17 @@ spring:
         #        show_sql: true # system.out
         format_sql: true
   #        use_sql_comments: true
-  h2:
-    console:
-      enabled: true
   datasource:
-    url: jdbc:h2:mem:test
+    url: jdbc:postgresql://localhost:50003/postgres
+    username: student
+    password: 1234
+#  h2:
+#    console:
+#      enabled: true
+#  datasource:
+#    url: jdbc:h2:mem:test
 
 logging:
   level:
     org.hibernate.SQL: debug # logger
     org.hibernate.type: trace
-  file:
-    name: myapp.log
-  logback:
-    rollingpolicy:
-      file-name-pattern: myapp.%d{yyyy-MM-dd}-%i.log
-      max-file-size: 10KB
-  pattern:
-    dateformat: Asia/Seoul
