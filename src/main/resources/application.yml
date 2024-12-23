@@ -8,7 +8,7 @@ spring:
     open-in-view: false # osiv
     hibernate:
 #      ddl-auto: create # or update, create-drop, validate
-      ddl-auto: validate # or update, create-drop, validate
+      ddl-auto: update # or update, create-drop, validate
     properties:
       hibernate:
         #        show_sql: true # system.out
@@ -48,7 +48,7 @@ spring:
         format_sql: true
   #        use_sql_comments: true
   datasource:
-    url: jdbc:postgresql://localhost:50003/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: student
     password: 1234
 #  h2:
