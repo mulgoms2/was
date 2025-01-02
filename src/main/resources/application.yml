@@ -51,10 +51,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: student
     password: 1234
-#  rsocket:
-#    server:
-#      mapping-path: "/rsocket"
-#      transport: "websocket"
+  rsocket:
+    server:
+      mapping-path: "/rsocket"
+      transport: "websocket"
 #  h2:
 #    console:
 #      enabled: true

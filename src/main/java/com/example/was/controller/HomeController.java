@@ -1,5 +1,6 @@
 package com.example.was.controller;
 
+import org.springframework.boot.actuate.health.Health;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,7 +15,14 @@ public class HomeController {
 
     @ResponseBody
     @GetMapping("/api/v1/healthCheck")
-    public String healthCheck() {
-        return "ok";
+    public Health healthCheck() {
+        return Health.up().build();
     }
+
+    @ResponseBody
+    @GetMapping("/api/v1/test")
+    public String test() {
+        return "test";
+    }
+
 }

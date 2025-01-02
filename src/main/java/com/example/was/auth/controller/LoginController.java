@@ -24,7 +24,7 @@ public class LoginController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
             UserDetails userDetails = authService.loadUserByUsername(loginRequest.email());
 
@@ -35,18 +35,22 @@ public class LoginController {
             String jwtToken = jwtTokenProvider.createToken(loginRequest.email());
 
             return ResponseEntity.ok()
-                    .body(jwtToken);
+                    .body(new LoginResponse(jwtToken, jwtToken));
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(401)
                     .body("일치하는 사용자가 없어요");
         }
     }
 
-    private record LoginRequest(@NotEmpty(message = "유효한 이메일 형식이 아닙니다.") @Email(message = "이메일 ㄱㄱ") String email, @NotEmpty String password) {
+    private record LoginRequest(@NotEmpty @Email String email, @NotEmpty String password) {
+    }
+
+    private record LoginResponse(String accessToken, String refreshToken) {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationException() {
-        return ResponseEntity.badRequest().body("유효한 형식의 이메일 주소가 아닙니다.");
+//        return ResponseEntity.notFound().build();
+        return ResponseEntity.badRequest().body(new LoginRequest("dbswoi123@naver.com", "123456"));
     }
 }
