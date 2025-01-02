@@ -37,11 +37,16 @@ spring:
       on-profile: dev
   application:
     name: was
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info
   jpa:
     #    database: h2
     open-in-view: false # osiv
     hibernate:
-      ddl-auto: create # or update, create-drop, validate
+      ddl-auto: update # or update, create-drop, validate
     properties:
       hibernate:
         #        show_sql: true # system.out
@@ -51,6 +56,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: student
     password: 1234
+  rsocket:
+    server:
+      mapping-path: "/rsocket"
+      transport: "websocket"
 #  h2:
 #    console:
 #      enabled: true
