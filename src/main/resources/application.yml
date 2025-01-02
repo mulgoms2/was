@@ -37,11 +37,6 @@ spring:
       on-profile: dev
   application:
     name: was
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health,info
   jpa:
     #    database: h2
     open-in-view: false # osiv
