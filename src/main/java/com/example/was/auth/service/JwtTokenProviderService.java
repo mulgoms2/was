@@ -9,13 +9,14 @@ import java.util.Date;
 
 @Slf4j
 @Service
-public class JwtTokenProvider {
+public class JwtTokenProviderService {
     private final SecretKey secretKey = Jwts.SIG.HS256.key().build();
-    private final long validityInMilliseconds = 3600000; // 1시간
+    private final long accessTokenExpireTime = 5000;
+    private final long refreshTokenExpireTime = 360000;
 
-    public String createToken(String username) {
+    public String createAccessToken(String username) {
         Date now = new Date();
-        Date expirationTime = new Date(now.getTime() + validityInMilliseconds);
+        Date expirationTime = new Date(now.getTime() + accessTokenExpireTime);
 
         return Jwts.builder()
                 .subject(username)
@@ -47,4 +48,15 @@ public class JwtTokenProvider {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
     }
 
+    public String createRefreshToken(String username) {
+        Date now = new Date();
+        Date expirationTime = new Date(now.getTime() + refreshTokenExpireTime);
+
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(now) // 발급 일시ㅏ
+                .expiration(expirationTime)  // 만료 시간 설정
+                .signWith(secretKey)      // 서명에 비밀 키 사용
+                .compact();
+    }
 }

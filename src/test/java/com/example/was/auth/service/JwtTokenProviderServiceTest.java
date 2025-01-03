@@ -10,14 +10,14 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JwtTokenProviderTest {
+class JwtTokenProviderServiceTest {
     private final SecretKey secretKey = Jwts.SIG.HS256.key().build();
     private final long validityInMilliseconds = 3600000; // 1시간
 
     private String jwts;
 
     @BeforeEach
-    void createToken() {
+    void createAccessToken() {
         jwts = Jwts.builder().signWith(secretKey).expiration(new Date()).compact();
         assertNotNull(jwts);
     }

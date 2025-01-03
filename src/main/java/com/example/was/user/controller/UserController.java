@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/user/valid")
-    public ResponseEntity<?> checkEmailDuplication(@Valid @Email String email) {
+    @GetMapping("/user/valid")
+    public ResponseEntity<?> checkEmailDuplication(@Valid @NotEmpty @Email String email) {
         if (userService.isUserEmailDuplicated(email)) {
             throw new UserDuplicateException(email);
         }

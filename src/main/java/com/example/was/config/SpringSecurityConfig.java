@@ -1,6 +1,6 @@
 package com.example.was.config;
 
-import com.example.was.auth.service.JwtTokenProvider;
+import com.example.was.auth.service.JwtTokenProviderService;
 import com.example.was.common.filters.JwtAuthenticatorFilter;
 import com.example.was.constants.ApiConstant;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProviderService jwtTokenProviderService;
 
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
@@ -42,7 +42,7 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers(ApiConstant.WHITE_LIST_URL)
                         .permitAll()
                         .anyRequest()
-                        .authenticated()).addFilterBefore(new JwtAuthenticatorFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                        .authenticated()).addFilterBefore(new JwtAuthenticatorFilter(jwtTokenProviderService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
