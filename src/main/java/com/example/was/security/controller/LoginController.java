@@ -1,7 +1,7 @@
-package com.example.was.auth.controller;
+package com.example.was.security.controller;
 
-import com.example.was.auth.service.AuthService;
-import com.example.was.auth.service.JwtTokenProviderService;
+import com.example.was.security.service.AuthService;
+import com.example.was.security.service.JwtTokenProviderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -37,24 +37,26 @@ public class LoginController {
 
             // db에서 조회된 계정의 비밀번호와 로그인 시도시 보낸 비밀번호가 일치하는지 확인
             if (!passwordEncoder.matches(loginRequest.password(), userDetails.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                     .build();
             }
 
             String accessToken = jwtTokenProviderService.createAccessToken(loginRequest.email());
             String refreshToken = jwtTokenProviderService.createRefreshToken(loginRequest.email());
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
-                    .httpOnly(true)
-                    .sameSite("Strict")
-                    .path("/")
-                    .maxAge(refreshCookieMaxAge)
-                    .build();
+                                                              .httpOnly(true)
+                                                              .sameSite("Strict")
+                                                              .path("/")
+                                                              .maxAge(refreshCookieMaxAge)
+                                                              .build();
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                    .body(new LoginResponse(accessToken));
+                                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                                 .body(new LoginResponse(accessToken));
         } catch (UsernameNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound()
+                                 .build();
         }
     }
 
@@ -66,6 +68,7 @@ public class LoginController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationException() {
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound()
+                             .build();
     }
 }

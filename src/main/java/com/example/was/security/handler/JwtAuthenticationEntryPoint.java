@@ -1,4 +1,4 @@
-package com.example.was.config;
+package com.example.was.security.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +18,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{ \"error\": \"unauthorized\", \"message\": \"Invalid or expired token\" }");
+        response.getWriter()
+                .write("{ \"error\": \"unauthorized\", \"message\": \"Invalid or expired token\" }");
     }
 }

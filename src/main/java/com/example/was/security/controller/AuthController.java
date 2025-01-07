@@ -1,6 +1,6 @@
-package com.example.was.auth.controller;
+package com.example.was.security.controller;
 
-import com.example.was.auth.service.JwtTokenProviderService;
+import com.example.was.security.service.JwtTokenProviderService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -24,13 +24,16 @@ public class AuthController {
                 String username = jwtTokenProviderService.getUsernameFromToken(refreshToken);
                 String accessToken = jwtTokenProviderService.createAccessToken(username);
 
-                return ResponseEntity.ok().body(new AccessTokenResponse(accessToken));
+                return ResponseEntity.ok()
+                                     .body(new AccessTokenResponse(accessToken));
             }
         } catch (ExpiredJwtException expiredJwtException) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new RefreshTokenExpiredError("token_expired", "refresh token has been expired"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(new RefreshTokenExpiredError("token_expired", "refresh token has been expired"));
         }
 
-        return ResponseEntity.internalServerError().build();
+        return ResponseEntity.internalServerError()
+                             .build();
     }
 
     private record RefreshTokenExpiredError(String error, String message) {

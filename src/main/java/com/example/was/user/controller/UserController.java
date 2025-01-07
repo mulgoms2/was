@@ -1,8 +1,7 @@
 package com.example.was.user.controller;
 
-import com.example.was.common.exception.UserDuplicateException;
 import com.example.was.user.domain.UserAccount;
-import com.example.was.user.dto.UserDto;
+import com.example.was.user.exception.UserDuplicateException;
 import com.example.was.user.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -10,7 +9,6 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -38,16 +36,17 @@ public class UserController {
         UserAccount account = userService.join(request.toUserAccount());
 
         return ResponseEntity.ok()
-                .body(new UserCreateResponse(account.getEmail(), account.getUsername()));
+                             .body(new UserCreateResponse(account.getEmail(), account.getUsername()));
     }
 
     private record UserCreateRequest(@NotEmpty @Email String email, @NotEmpty String name, @NotEmpty String password) {
         private UserAccount toUserAccount() {
+
             return UserAccount.builder()
-                    .username(name)
-                    .email(email)
-                    .password(password)
-                    .build();
+                              .username(name)
+                              .email(email)
+                              .password(password)
+                              .build();
         }
     }
 
@@ -57,6 +56,6 @@ public class UserController {
     @ExceptionHandler(UserDuplicateException.class)
     public ResponseEntity<?> handleUserDuplicateException(UserDuplicateException e) {
         return ResponseEntity.badRequest()
-                .body("user email already exists");
+                             .body("user email already exists");
     }
 }
