@@ -7,7 +7,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +27,9 @@ public class LoginController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProviderService jwtTokenProviderService;
 
+    @Value("${cookie.max-age}")
+    private long refreshCookieMaxAge;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
@@ -33,20 +39,29 @@ public class LoginController {
             if (!passwordEncoder.matches(loginRequest.password(), userDetails.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+
             String accessToken = jwtTokenProviderService.createAccessToken(loginRequest.email());
             String refreshToken = jwtTokenProviderService.createRefreshToken(loginRequest.email());
 
+            ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
+                    .httpOnly(true)
+                    .sameSite("Strict")
+                    .path("/")
+                    .maxAge(refreshCookieMaxAge)
+                    .build();
+
             return ResponseEntity.ok()
-                    .body(new LoginResponse(accessToken, refreshToken));
+                    .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                    .body(new LoginResponse(accessToken));
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    private record LoginRequest(@NotEmpty @Email String email, @NotEmpty String password) {
+    public record LoginRequest(@NotEmpty @Email String email, @NotEmpty String password) {
     }
 
-    private record LoginResponse(String accessToken, String refreshToken) {
+    private record LoginResponse(String accessToken) {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -7,13 +7,13 @@ spring:
   jpa:
     open-in-view: false # osiv
     hibernate:
-#      ddl-auto: create # or update, create-drop, validate
+      #      ddl-auto: create # or update, create-drop, validate
       ddl-auto: update # or update, create-drop, validate
     properties:
       hibernate:
         #        show_sql: true # system.out
         format_sql: true
-  #        use_sql_comments: true
+    #        use_sql_comments: true
   datasource:
     url: jdbc:postgresql://database-1.cxaay0sy093x.ap-northeast-2.rds.amazonaws.com/postgres
     username: postgres
@@ -30,6 +30,15 @@ logging:
       max-file-size: 10KB
   pattern:
     dateformat: Asia/Seoul
+cookie:
+  max-age: 86400
+jwtToken:
+  accessToken:
+    expiration: 10000
+  refreshToken:
+    expiration: 86400000
+cors:
+  allowed-origins: "https://woowangjwawang.vercel.app"
 ---
 spring:
   config:
@@ -55,13 +64,16 @@ spring:
     server:
       mapping-path: "/rsocket"
       transport: "websocket"
-#  h2:
-#    console:
-#      enabled: true
-#  datasource:
-#    url: jdbc:h2:mem:test
-
 logging:
   level:
     org.hibernate.SQL: debug # logger
     org.hibernate.type: trace
+cookie:
+  max-age: 86400
+jwtToken:
+  accessToken:
+    expiration: 10000
+  refreshToken:
+    expiration: 86400000
+cors:
+  allowed-origins: "http://localhost:3000"

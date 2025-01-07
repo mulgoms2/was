@@ -19,13 +19,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtTokenProviderService jwtTokenProviderService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
@@ -42,7 +42,9 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize.requestMatchers(ApiConstant.WHITE_LIST_URL)
                         .permitAll()
                         .anyRequest()
-                        .authenticated()).addFilterBefore(new JwtAuthenticatorFilter(jwtTokenProviderService), UsernamePasswordAuthenticationFilter.class);
+                        .authenticated()).exceptionHandling(handler -> handler.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+
+        http.addFilterBefore(new JwtAuthenticatorFilter(jwtTokenProviderService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

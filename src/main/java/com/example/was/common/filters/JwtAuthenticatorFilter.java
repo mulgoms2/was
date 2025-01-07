@@ -1,19 +1,23 @@
 package com.example.was.common.filters;
 
 import com.example.was.auth.service.JwtTokenProviderService;
+import com.example.was.constants.ApiConstant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     private final JwtTokenProviderService jwtTokenProviderService;
@@ -22,11 +26,9 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getBearerTokenFrom(request);
 
-        if (token != null && !token.isEmpty()) {
-            if (jwtTokenProviderService.validateToken(token)) {
-                Authentication authentication = getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication); // 스프링 시큐리티 컨텍스트에 authenticaion 객체를 저장하면 인가된 api 요청으로 처리된다.
-            }
+        if (token != null && !isWhiteList(request) && jwtTokenProviderService.validateToken(token)) {
+            Authentication authentication = getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication); // 스프링 시큐리티 컨텍스트에 authenticaion 객체를 저장하면 인가된 api 요청으로 처리된다.
         }
 
         filterChain.doFilter(request, response);
@@ -44,5 +46,9 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);  // "Bearer " 제거
         }
         return null;
+    }
+
+    private boolean isWhiteList(HttpServletRequest request) {
+        return Arrays.stream(ApiConstant.WHITE_LIST_URL).anyMatch(whiteUri -> whiteUri.equals(request.getRequestURI()));
     }
 }

@@ -2,6 +2,7 @@ package com.example.was.auth.service;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -11,8 +12,11 @@ import java.util.Date;
 @Service
 public class JwtTokenProviderService {
     private final SecretKey secretKey = Jwts.SIG.HS256.key().build();
-    private final long accessTokenExpireTime = 5000;
-    private final long refreshTokenExpireTime = 360000;
+
+    @Value("${jwtToken.accessToken.expiration}")
+    private long accessTokenExpireTime;
+    @Value("${jwtToken.refreshToken.expiration}")
+    private long refreshTokenExpireTime;
 
     public String createAccessToken(String username) {
         Date now = new Date();
@@ -26,25 +30,17 @@ public class JwtTokenProviderService {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Date expiration = parseToken(token).getPayload().getExpiration();
-
-            if (expiration.before(new Date())) {
-                return false;  // 만료된 토큰은 유효하지 않음
-            }
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    // 토큰이 파싱될때 시크릿키 및 시간 유효성에 대한 검사가 일어남
+    public boolean validateToken(String token) throws JwtException {
+        parseToken(token);
+        return true;
     }
 
     public String getUsernameFromToken(String token) {
         return parseToken(token).getPayload().getSubject();
     }
 
-    private Jws<Claims> parseToken(String token) {
+    private Jws<Claims> parseToken(String token) throws JwtException {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
     }
 
