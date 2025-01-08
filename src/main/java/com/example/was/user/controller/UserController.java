@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,12 +51,12 @@ public class UserController {
         }
     }
 
-    private record UserCreateResponse(String email, String name) {
+    public record UserCreateResponse(String email, String name) {
     }
 
     @ExceptionHandler(UserDuplicateException.class)
-    public ResponseEntity<?> handleUserDuplicateException(UserDuplicateException e) {
-        return ResponseEntity.badRequest()
+    public ResponseEntity<?> handleUserDuplicateException() {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                              .body("user email already exists");
     }
 }

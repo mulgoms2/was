@@ -10,15 +10,18 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleDefaultError(Exception e) {
+    public ResponseEntity<?> handleDefaultError() {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("internal server error");
+                             .body(new CommonError("internal server error", "un handled error"));
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<?> handleValidationError(HandlerMethodValidationException e) {
+    public ResponseEntity<?> handleValidationError() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("validation error");
+                             .body(new CommonError("validation error", "error when validate"));
+    }
+
+    private record CommonError(String error, String message) {
     }
 }
