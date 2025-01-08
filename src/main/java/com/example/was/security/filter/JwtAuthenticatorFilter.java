@@ -1,6 +1,6 @@
 package com.example.was.security.filter;
 
-import com.example.was.security.service.AuthService;
+import com.example.was.user.service.UserService;
 import com.example.was.security.service.JwtTokenProviderService;
 import com.example.was.constants.ApiConstant;
 import jakarta.servlet.FilterChain;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     private final JwtTokenProviderService jwtTokenProviderService;
-    private final AuthService authService;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -42,7 +42,7 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
 
     private Authentication getAuthentication(String token) {
         String username = jwtTokenProviderService.getUsernameFromToken(token);
-        UserDetails userDetails = authService.loadUserByUsername(username);
+        UserDetails userDetails = userService.loadUserByUsername(username);
 
         return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
     }

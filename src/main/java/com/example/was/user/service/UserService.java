@@ -4,8 +4,11 @@ import com.example.was.user.domain.UserAccount;
 import com.example.was.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,25 +16,26 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserAccount join(UserAccount userAccount) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        List<GrantedAuthority> role = new ArrayList<>();
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserDetails userAccount = getUserAccount(email);
 
-        authorities.add(new SimpleGrantedAuthority("READ_PRIVILEGE"));
-        role.add(new SimpleGrantedAuthority("ROLE_USER"));
+        log.info("{}", userAccount);
 
-        userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
-        userAccount.setAuthorities(authorities);
-        userAccount.setRole(role);
+        return userAccount;
+    }
 
-        return userRepository.save(userAccount);
+    public UserDetails getUserAccount(String email) {
+        return userRepository.findByEmail(email)
+                             .orElseThrow(() -> new UsernameNotFoundException("user not found"));
     }
 
     public boolean isUserEmailDuplicated(String email) {
@@ -39,8 +43,15 @@ public class UserService {
                              .isPresent();
     }
 
-    public UserAccount getUserAccount(String email) {
-        return userRepository.findByEmail(email)
-                             .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+    public UserAccount join(UserAccount userAccount) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        authorities.add(new SimpleGrantedAuthority("READ_PRIVILEGE"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+        userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
+        userAccount.setAuthorities(authorities);
+
+        return userRepository.save(userAccount);
     }
 }

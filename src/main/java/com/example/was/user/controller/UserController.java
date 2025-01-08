@@ -1,8 +1,8 @@
 package com.example.was.user.controller;
 
+import com.example.was.user.service.UserService;
 import com.example.was.user.domain.UserAccount;
 import com.example.was.user.exception.UserDuplicateException;
-import com.example.was.user.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -39,7 +39,7 @@ public class UserController {
                              .body(new UserCreateResponse(account.getEmail(), account.getUsername()));
     }
 
-    private record UserCreateRequest(@NotEmpty @Email String email, @NotEmpty String name, @NotEmpty String password) {
+    public record UserCreateRequest(@NotEmpty @Email String email, @NotEmpty String name, @NotEmpty String password) {
         private UserAccount toUserAccount() {
 
             return UserAccount.builder()

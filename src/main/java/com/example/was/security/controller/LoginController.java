@@ -1,6 +1,6 @@
 package com.example.was.security.controller;
 
-import com.example.was.security.service.AuthService;
+import com.example.was.user.service.UserService;
 import com.example.was.security.service.JwtTokenProviderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class LoginController {
-    private final AuthService authService;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProviderService jwtTokenProviderService;
 
@@ -33,7 +33,7 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
-            UserDetails userDetails = authService.loadUserByUsername(loginRequest.email());
+            UserDetails userDetails = userService.loadUserByUsername(loginRequest.email());
 
             // db에서 조회된 계정의 비밀번호와 로그인 시도시 보낸 비밀번호가 일치하는지 확인
             if (!passwordEncoder.matches(loginRequest.password(), userDetails.getPassword())) {
